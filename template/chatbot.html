@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative AI Chatbot</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="../static/css/chatbot.css">
+    <link rel="icon" type="image/webp" href="../static/img/logo.webp">
+</head>
+<body>
+    <div id="chat">
+        <h1>TALK TO FINCOM AI</h1>
+        <p>Welcome! I'm here to help you with your finance-related questions. How can I assist you today?</p>
+        <div id="messages"></div>
+        <div style="display: flex; justify-content: space-between;">
+            <input type="text" id="user_input" placeholder="Type your message here..." />
+            <button id="send">Send</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#send').click(function() {
+                var userInput = $('#user_input').val();
+                if (userInput.trim() === "") return; // Prevent empty messages
+                $('#messages').append('<div class="message user">' + userInput + '</div>');
+                $('#user_input').val('');
+
+                $.post('/generate', { user_input: userInput }, function(data) {
+                    $('#messages').append('<div class="message bot">' + data.response + '</div>');
+                    $('#messages').scrollTop($('#messages')[0].scrollHeight); // Auto-scroll to the bottom
+                });
+            });
+
+            $('#user_input').keypress(function(e) {
+                if (e.which == 13) {
+                    $('#send').click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
